@@ -1,9 +1,11 @@
 package com.example.codepathprework;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import org.apache.commons.io.FileUtils;
@@ -21,6 +23,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity{
 
     List<String> items; //Create our global list of items
+
+    public static final String positionKey = "POSITION";
+    public static final String contentKey = "CONTENT";
+    public static final int requestCode = 200;
 
     Button button;
     EditText editText;
@@ -50,8 +56,20 @@ public class MainActivity extends AppCompatActivity{
             }
         };
 
+        ItemsAdapter.OnClickListener onClickListener = new ItemsAdapter.OnClickListener() {
+            @Override
+            public void onItemClicked(int position) {
+                //Create a new intent
+                Intent editIntent = new Intent(MainActivity.this, EditActivity.class);
+                Log.d("MainActivity", "Type: " + editIntent.getType());
+                editIntent.putExtra(positionKey, position);
+                editIntent.putExtra(contentKey, items.get(position));
+                startActivityForResult(editIntent, requestCode);
+            }
+        };
+
         //Create the adapter
-        itemsAdapter = new ItemsAdapter(items, onLongClickListener);
+        itemsAdapter = new ItemsAdapter(items, onLongClickListener, onClickListener);
         recyclerView.setAdapter(itemsAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -66,6 +84,24 @@ public class MainActivity extends AppCompatActivity{
                 WriteData();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == MainActivity.requestCode && resultCode == RESULT_OK)
+        {
+            //Prepare data for changes
+            int position = data.getExtras().getInt(positionKey);
+            String newString = data.getStringExtra(contentKey);
+            items.set(position, newString);
+            Log.d("MainActivity", "New string: " + items.get(position));
+            itemsAdapter.notifyItemChanged(position);
+            WriteData();
+            Toast.makeText(getApplicationContext(), "Edited task is now: "+newString, Toast.LENGTH_SHORT).show();
+        } else {
+            Log.d("MainActivity", "A different request code was sent, or edit was canceled.");
+        }
     }
 
     private File getData() {

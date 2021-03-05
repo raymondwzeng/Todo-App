@@ -1,5 +1,6 @@
 package com.example.codepathprework;
 
+import android.content.Intent;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,19 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
         void onItemLongClicked(int position);
     }
 
+    public interface OnClickListener {
+        void onItemClicked(int position);
+    }
+
     List<String> items;
     OnLongClickListener onLongClickListener;
+    OnClickListener onClickListener;
 
-    public ItemsAdapter(List<String> inputList, OnLongClickListener onLongClickListener)
+    public ItemsAdapter(List<String> inputList, OnLongClickListener onLongClickListener, OnClickListener onClickListener)
     {
         this.items = inputList;
         this.onLongClickListener = onLongClickListener;
+        this.onClickListener = onClickListener;
     }
 
     @NonNull
@@ -68,6 +75,13 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> 
                     //We need to tell main that we want this GONE.
                     onLongClickListener.onItemLongClicked(getAdapterPosition());
                     return true; //Callback will be consumed with true
+                }
+            });
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onClickListener.onItemClicked(getAdapterPosition());
                 }
             });
         }
