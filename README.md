@@ -24,7 +24,7 @@ The following **additional** features are planned, but not implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://i.imgur.com/EA6xrvZ.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='https://i.imgur.com/9swsD8q.gifv' title='Walkthrough' width='' alt='Walkthrough' />
 
 GIF created with [EZGif's video to GIF](https://ezgif.com/video-to-gif) as well as OBS.
 
